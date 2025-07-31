@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
@@ -17,16 +17,20 @@ function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Load dark mode preference on component mount
-  React.useEffect(() => {
+  useEffect(() => {
     const saved = localStorage.getItem('darkMode');
     if (saved) {
       setIsDarkMode(JSON.parse(saved));
     }
   }, []);
 
-  // Save dark mode preference when it changes
-  React.useEffect(() => {
+  useEffect(() => {
+    const html = document.documentElement;
+    if (isDarkMode) {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
@@ -60,15 +64,13 @@ function App() {
   };
 
   return (
-    <div className={`${isDarkMode ? 'dark' : ''}`}>
-      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-        <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-          <main className="flex-1 overflow-y-auto">
-            {renderPage()}
-          </main>
-        </div>
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+        <main className="flex-1 overflow-y-auto">
+          {renderPage()}
+        </main>
       </div>
     </div>
   );
