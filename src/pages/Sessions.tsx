@@ -1,10 +1,25 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, Users, MapPin, Plus, Edit, Trash2, Search, Filter } from 'lucide-react';
+import { Calendar, Clock, Users, MapPin, Plus, Edit, Trash2, Search, Filter, X } from 'lucide-react';
+
+interface Session {
+  id: number;
+  title: string;
+  group: string;
+  coach: string;
+  date: string;
+  time: string;
+  location: string;
+  attendees: number;
+  maxAttendees: number;
+  status: string;
+  type: string;
+}
 
 const Sessions: React.FC = () => {
   const [viewMode, setViewMode] = useState('upcoming');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const sessions = [
+  const [sessions, setSessions] = useState<Session[]>([
     {
       id: 1,
       title: 'U-14 Eagles Training',
@@ -162,7 +177,11 @@ const Sessions: React.FC = () => {
       status: 'Completed',
       type: 'Assessment'
     }
-  ];
+  ]);
+
+  const groups = ['U-14 Eagles', 'U-16 Lions', 'U-14 Panthers', 'All Groups'];
+  const coaches = ['John Kamau', 'Sarah Wanjiku', 'Michael Ochieng'];
+  const locations = ['Main Field', 'Training Ground A', 'Training Ground B', 'Indoor Hall', 'Gym', 'Track', 'Goal Training Area'];
 
   const upcomingSessions = sessions.filter(session => 
     new Date(session.date) >= new Date() && session.status !== 'Completed'
@@ -173,6 +192,29 @@ const Sessions: React.FC = () => {
   );
 
   const currentSessions = viewMode === 'upcoming' ? upcomingSessions : pastSessions;
+
+  const handleCreateSession = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    
+    const newSession: Session = {
+      id: sessions.length + 1,
+      title: formData.get('title') as string,
+      group: formData.get('group') as string,
+      coach: formData.get('coach') as string,
+      date: formData.get('date') as string,
+      time: formData.get('time') as string,
+      location: formData.get('location') as string,
+      attendees: 0,
+      maxAttendees: parseInt(formData.get('maxAttendees') as string),
+      status: 'Scheduled',
+      type: formData.get('type') as string
+    };
+
+    setSessions([...sessions, newSession]);
+    setShowCreateModal(false);
+    alert('Session scheduled successfully!');
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -224,7 +266,10 @@ const Sessions: React.FC = () => {
             Manage training sessions and activities
           </p>
         </div>
-        <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+        <button 
+          onClick={() => setShowCreateModal(true)}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+        >
           <Plus className="w-4 h-4" />
           <span>Schedule Session</span>
         </button>
@@ -364,6 +409,177 @@ const Sessions: React.FC = () => {
               : 'No past sessions to display.'
             }
           </p>
+        </div>
+      )}
+
+      {/* Create Session Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Schedule New Session
+              </h2>
+              <button 
+                onClick={() => setShowCreateModal(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateSession} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Session Title *
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  required
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  placeholder="Enter session title..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Group *
+                  </label>
+                  <select
+                    name="group"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  >
+                    <option value="">Select Group</option>
+                    {groups.map((group) => (
+                      <option key={group} value={group}>
+                        {group}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Coach *
+                  </label>
+                  <select
+                    name="coach"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  >
+                    <option value="">Select Coach</option>
+                    {coaches.map((coach) => (
+                      <option key={coach} value={coach}>
+                        {coach}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Date *
+                  </label>
+                  <input
+                    type="date"
+                    name="date"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Time *
+                  </label>
+                  <input
+                    type="text"
+                    name="time"
+                    required
+                    placeholder="e.g., 16:00 - 18:00"
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Location *
+                  </label>
+                  <select
+                    name="location"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  >
+                    <option value="">Select Location</option>
+                    {locations.map((location) => (
+                      <option key={location} value={location}>
+                        {location}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Max Attendees *
+                  </label>
+                  <input
+                    type="number"
+                    name="maxAttendees"
+                    required
+                    min="1"
+                    max="50"
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Session Type *
+                </label>
+                <select
+                  name="type"
+                  required
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                >
+                  <option value="">Select Type</option>
+                  <option value="Training">Training</option>
+                  <option value="Match Prep">Match Preparation</option>
+                  <option value="Workshop">Workshop</option>
+                  <option value="Fitness">Fitness</option>
+                  <option value="Tactical">Tactical</option>
+                  <option value="Skills">Skills</option>
+                  <option value="Specialized">Specialized</option>
+                  <option value="Scrimmage">Scrimmage</option>
+                  <option value="Assessment">Assessment</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  Schedule Session
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

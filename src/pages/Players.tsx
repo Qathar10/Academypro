@@ -1,13 +1,60 @@
 import React, { useState } from 'react';
-import { Search, Filter, Plus, Trash2, X, Upload, User } from 'lucide-react';
+import { Search, Filter, Plus, Trash2, X, Upload, User, ArrowLeft, Download, Edit, Calendar, Clock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+
+interface Student {
+  id: number;
+  name: string;
+  age: number;
+  group: string;
+  guardian: string;
+  status: string;
+  jerseySize: string;
+  kitSize: string;
+  shoeSize: string;
+  weightBefore: string;
+  weightAfter: string;
+  avatar: string;
+  photo: string | null;
+  dateOfBirth: string;
+  email: string;
+  phone: string;
+  address: string;
+  enrollmentDate: string;
+  assessments: {
+    overallScore: number;
+    ballControl: number;
+    speed: number;
+    teamwork: number;
+    passing: number;
+    shooting: number;
+    notes: string;
+  };
+  medical: {
+    allergies: string[];
+    conditions: string[];
+    injuryHistory: string[];
+  };
+  attendance: {
+    totalSessions: number;
+    attended: number;
+    missed: number;
+    percentage: number;
+    sessions: Array<{
+      date: string;
+      session: string;
+      status: 'Present' | 'Absent' | 'Late';
+    }>;
+  };
+}
 
 const Players: React.FC = () => {
   const [activeTab, setActiveTab] = useState('students');
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
   const [showAddGuardianModal, setShowAddGuardianModal] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
-  const [students, setStudents] = useState([
+  const [students, setStudents] = useState<Student[]>([
     {
       id: 1,
       name: 'Michael Ochieng',
@@ -21,7 +68,39 @@ const Players: React.FC = () => {
       weightBefore: '45kg',
       weightAfter: '48kg',
       avatar: 'MO',
-      photo: null
+      photo: null,
+      dateOfBirth: '2010-03-15',
+      email: 'michael.ochieng@email.com',
+      phone: '+254 712 345 678',
+      address: '123 Nairobi Street, Nairobi, Kenya',
+      enrollmentDate: '2023-01-15',
+      assessments: {
+        overallScore: 8.4,
+        ballControl: 8.5,
+        speed: 9.0,
+        teamwork: 8.2,
+        passing: 7.8,
+        shooting: 8.1,
+        notes: 'Excellent ball control and speed. Needs improvement in passing accuracy.'
+      },
+      medical: {
+        allergies: ['Peanuts'],
+        conditions: ['Asthma (mild)'],
+        injuryHistory: ['Sprained ankle - Oct 2023']
+      },
+      attendance: {
+        totalSessions: 48,
+        attended: 42,
+        missed: 6,
+        percentage: 87.5,
+        sessions: [
+          { date: '2024-12-15', session: 'U-14 Eagles Training', status: 'Present' },
+          { date: '2024-12-13', session: 'Skills Workshop', status: 'Present' },
+          { date: '2024-12-11', session: 'U-14 Eagles Training', status: 'Absent' },
+          { date: '2024-12-09', session: 'Fitness Training', status: 'Late' },
+          { date: '2024-12-07', session: 'U-14 Eagles Training', status: 'Present' }
+        ]
+      }
     },
     {
       id: 2,
@@ -36,7 +115,39 @@ const Players: React.FC = () => {
       weightBefore: '52kg',
       weightAfter: '55kg',
       avatar: 'DW',
-      photo: null
+      photo: null,
+      dateOfBirth: '2008-07-22',
+      email: 'david.wanjiku@email.com',
+      phone: '+254 723 456 789',
+      address: '456 Mombasa Road, Nairobi, Kenya',
+      enrollmentDate: '2022-09-10',
+      assessments: {
+        overallScore: 8.9,
+        ballControl: 9.2,
+        speed: 8.5,
+        teamwork: 9.1,
+        passing: 8.9,
+        shooting: 8.7,
+        notes: 'Outstanding technical skills and leadership qualities. Team captain material.'
+      },
+      medical: {
+        allergies: [],
+        conditions: [],
+        injuryHistory: ['Minor knee strain - Aug 2023']
+      },
+      attendance: {
+        totalSessions: 52,
+        attended: 48,
+        missed: 4,
+        percentage: 92.3,
+        sessions: [
+          { date: '2024-12-14', session: 'U-16 Lions Training', status: 'Present' },
+          { date: '2024-12-12', session: 'Match Preparation', status: 'Present' },
+          { date: '2024-12-10', session: 'U-16 Lions Training', status: 'Present' },
+          { date: '2024-12-08', session: 'Tactical Session', status: 'Present' },
+          { date: '2024-12-06', session: 'U-16 Lions Training', status: 'Absent' }
+        ]
+      }
     },
     {
       id: 3,
@@ -51,7 +162,39 @@ const Players: React.FC = () => {
       weightBefore: '38kg',
       weightAfter: '40kg',
       avatar: 'GA',
-      photo: null
+      photo: null,
+      dateOfBirth: '2011-11-08',
+      email: 'grace.akinyi@email.com',
+      phone: '+254 734 567 890',
+      address: '789 Kisumu Avenue, Nairobi, Kenya',
+      enrollmentDate: '2023-03-20',
+      assessments: {
+        overallScore: 7.8,
+        ballControl: 7.5,
+        speed: 7.8,
+        teamwork: 8.2,
+        passing: 8.0,
+        shooting: 7.3,
+        notes: 'Good team player with strong work ethic. Improving steadily in all areas.'
+      },
+      medical: {
+        allergies: ['Shellfish'],
+        conditions: [],
+        injuryHistory: []
+      },
+      attendance: {
+        totalSessions: 32,
+        attended: 28,
+        missed: 4,
+        percentage: 87.5,
+        sessions: [
+          { date: '2024-12-13', session: 'U-14 Panthers Training', status: 'Present' },
+          { date: '2024-12-11', session: 'Skills Development', status: 'Present' },
+          { date: '2024-12-09', session: 'U-14 Panthers Training', status: 'Late' },
+          { date: '2024-12-07', session: 'Fitness Training', status: 'Present' },
+          { date: '2024-12-05', session: 'U-14 Panthers Training', status: 'Present' }
+        ]
+      }
     }
   ]);
 
@@ -99,7 +242,7 @@ const Players: React.FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     
-    const newStudent = {
+    const newStudent: Student = {
       id: students.length + 1,
       name: `${formData.get('firstName')} ${formData.get('lastName')}`,
       age: new Date().getFullYear() - new Date(formData.get('dateOfBirth') as string).getFullYear(),
@@ -112,7 +255,33 @@ const Players: React.FC = () => {
       weightBefore: '0kg',
       weightAfter: '0kg',
       avatar: `${formData.get('firstName')?.toString().charAt(0)}${formData.get('lastName')?.toString().charAt(0)}`,
-      photo: selectedPhoto
+      photo: selectedPhoto,
+      dateOfBirth: formData.get('dateOfBirth') as string,
+      email: formData.get('email') as string || '',
+      phone: formData.get('phone') as string || '',
+      address: formData.get('address') as string || '',
+      enrollmentDate: new Date().toISOString().split('T')[0],
+      assessments: {
+        overallScore: 0,
+        ballControl: 0,
+        speed: 0,
+        teamwork: 0,
+        passing: 0,
+        shooting: 0,
+        notes: ''
+      },
+      medical: {
+        allergies: [],
+        conditions: [],
+        injuryHistory: []
+      },
+      attendance: {
+        totalSessions: 0,
+        attended: 0,
+        missed: 0,
+        percentage: 0,
+        sessions: []
+      }
     };
 
     setStudents([...students, newStudent]);
@@ -138,6 +307,284 @@ const Players: React.FC = () => {
     setShowAddGuardianModal(false);
     alert('Guardian added successfully!');
   };
+
+  const handleStudentClick = (student: Student) => {
+    setSelectedStudent(student);
+  };
+
+  const handleBackToList = () => {
+    setSelectedStudent(null);
+  };
+
+  const getAttendanceStatusColor = (status: string) => {
+    switch (status) {
+      case 'Present':
+        return 'text-green-600 dark:text-green-400';
+      case 'Absent':
+        return 'text-red-600 dark:text-red-400';
+      case 'Late':
+        return 'text-yellow-600 dark:text-yellow-400';
+      default:
+        return 'text-gray-600 dark:text-gray-400';
+    }
+  };
+
+  const getAttendanceStatusIcon = (status: string) => {
+    switch (status) {
+      case 'Present':
+        return CheckCircle;
+      case 'Absent':
+        return XCircle;
+      case 'Late':
+        return AlertTriangle;
+      default:
+        return CheckCircle;
+    }
+  };
+
+  // Student Profile View
+  if (selectedStudent) {
+    return (
+      <div className="p-6 space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={handleBackToList}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {selectedStudent.name}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                {selectedStudent.group} • Age {selectedStudent.age} • {selectedStudent.status}
+              </p>
+            </div>
+          </div>
+          <div className="flex space-x-3">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+              <Download className="w-4 h-4" />
+              <span>Download ID Card</span>
+            </button>
+            <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+              <Edit className="w-4 h-4" />
+              <span>Edit Profile</span>
+            </button>
+            <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+              <Trash2 className="w-4 h-4" />
+              <span>Delete Student</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Basic Information */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Basic Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Date of Birth</label>
+                  <p className="text-gray-900 dark:text-white">{new Date(selectedStudent.dateOfBirth).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Email</label>
+                  <p className="text-gray-900 dark:text-white">{selectedStudent.email || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Phone</label>
+                  <p className="text-gray-900 dark:text-white">{selectedStudent.phone || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Enrollment Date</label>
+                  <p className="text-gray-900 dark:text-white">{new Date(selectedStudent.enrollmentDate).toLocaleDateString()}</p>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Address</label>
+                  <p className="text-gray-900 dark:text-white">{selectedStudent.address || 'Not provided'}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Assessment Data */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Latest Assessment</h3>
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Overall Score</span>
+                  <span className="text-lg font-bold text-gray-900 dark:text-white">{selectedStudent.assessments.overallScore}/10</span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                  <div
+                    className="bg-green-500 h-3 rounded-full"
+                    style={{ width: `${(selectedStudent.assessments.overallScore / 10) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                {[
+                  { label: 'Ball Control', value: selectedStudent.assessments.ballControl },
+                  { label: 'Speed', value: selectedStudent.assessments.speed },
+                  { label: 'Teamwork', value: selectedStudent.assessments.teamwork },
+                  { label: 'Passing', value: selectedStudent.assessments.passing },
+                  { label: 'Shooting', value: selectedStudent.assessments.shooting }
+                ].map((skill) => (
+                  <div key={skill.label} className="text-center">
+                    <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{skill.label}</div>
+                    <div className="text-lg font-bold text-gray-900 dark:text-white">{skill.value}/10</div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div
+                        className="bg-blue-500 h-2 rounded-full"
+                        style={{ width: `${(skill.value / 10) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {selectedStudent.assessments.notes && (
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Notes</label>
+                  <p className="text-gray-900 dark:text-white mt-1">{selectedStudent.assessments.notes}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Medical Information */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Medical Information</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Allergies</label>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {selectedStudent.medical.allergies.length > 0 ? (
+                      selectedStudent.medical.allergies.map((allergy, index) => (
+                        <span key={index} className="px-2 py-1 bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400 text-sm rounded">
+                          {allergy}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-gray-500 dark:text-gray-400">None reported</span>
+                    )}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Medical Conditions</label>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {selectedStudent.medical.conditions.length > 0 ? (
+                      selectedStudent.medical.conditions.map((condition, index) => (
+                        <span key={index} className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-400 text-sm rounded">
+                          {condition}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-gray-500 dark:text-gray-400">None reported</span>
+                    )}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Injury History</label>
+                  <div className="mt-1">
+                    {selectedStudent.medical.injuryHistory.length > 0 ? (
+                      <ul className="space-y-1">
+                        {selectedStudent.medical.injuryHistory.map((injury, index) => (
+                          <li key={index} className="text-gray-900 dark:text-white text-sm">• {injury}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span className="text-gray-500 dark:text-gray-400">No injuries reported</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Student Photo */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <div className="text-center">
+                {selectedStudent.photo ? (
+                  <img 
+                    src={selectedStudent.photo} 
+                    alt={selectedStudent.name}
+                    className="w-32 h-32 rounded-full mx-auto object-cover mb-4"
+                  />
+                ) : (
+                  <div className="w-32 h-32 bg-green-500 rounded-full mx-auto flex items-center justify-center mb-4">
+                    <span className="text-white text-3xl font-bold">
+                      {selectedStudent.avatar}
+                    </span>
+                  </div>
+                )}
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{selectedStudent.name}</h3>
+                <p className="text-gray-600 dark:text-gray-400">{selectedStudent.group}</p>
+              </div>
+            </div>
+
+            {/* Attendance Summary */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Attendance Summary</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Total Sessions</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{selectedStudent.attendance.totalSessions}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Attended</span>
+                  <span className="font-medium text-green-600 dark:text-green-400">{selectedStudent.attendance.attended}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Missed</span>
+                  <span className="font-medium text-red-600 dark:text-red-400">{selectedStudent.attendance.missed}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Percentage</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{selectedStudent.attendance.percentage}%</span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                  <div
+                    className="bg-green-500 h-3 rounded-full"
+                    style={{ width: `${selectedStudent.attendance.percentage}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Attendance */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Sessions</h3>
+              <div className="space-y-3">
+                {selectedStudent.attendance.sessions.map((session, index) => {
+                  const StatusIcon = getAttendanceStatusIcon(session.status);
+                  return (
+                    <div key={index} className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{session.session}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{new Date(session.date).toLocaleDateString()}</div>
+                      </div>
+                      <div className={`flex items-center space-x-1 ${getAttendanceStatusColor(session.status)}`}>
+                        <StatusIcon className="w-4 h-4" />
+                        <span className="text-sm font-medium">{session.status}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -236,7 +683,11 @@ const Players: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {students.map((student) => (
-                  <tr key={student.id}>
+                  <tr 
+                    key={student.id} 
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                    onClick={() => handleStudentClick(student)}
+                  >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         {student.photo ? (
@@ -290,7 +741,13 @@ const Players: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
+                      <button 
+                        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Handle delete
+                        }}
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </td>

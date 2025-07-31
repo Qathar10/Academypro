@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Clock, Target, Users, BookOpen, Play } from 'lucide-react';
+import { Plus, Search, Filter, Clock, Target, Users, BookOpen, Play, X } from 'lucide-react';
+
+interface Drill {
+  id: number;
+  name: string;
+  category: string;
+  difficulty: string;
+  description: string;
+  duration: string;
+  skillsCount: number;
+  equipment: string[];
+  skillsDeveloped: string[];
+  instructions: string[];
+}
 
 const DrillsLibrary: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [selectedDifficulty, setSelectedDifficulty] = useState('All Difficulties');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const drills = [
+  const [drills, setDrills] = useState<Drill[]>([
     {
       id: 1,
       name: 'Cone Dribbling',
@@ -108,10 +122,36 @@ const DrillsLibrary: React.FC = () => {
         'Encourage quick passing and movement'
       ]
     }
-  ];
+  ]);
 
   const categories = ['All Categories', 'Technical', 'Passing', 'Shooting', 'Defending', 'Physical', 'Tactical'];
   const difficulties = ['All Difficulties', 'Beginner', 'Intermediate', 'Advanced'];
+
+  const handleCreateDrill = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    
+    const equipment = (formData.get('equipment') as string).split(',').map(e => e.trim());
+    const skillsDeveloped = (formData.get('skillsDeveloped') as string).split(',').map(s => s.trim());
+    const instructions = (formData.get('instructions') as string).split('\n').filter(i => i.trim());
+
+    const newDrill: Drill = {
+      id: drills.length + 1,
+      name: formData.get('name') as string,
+      category: formData.get('category') as string,
+      difficulty: formData.get('difficulty') as string,
+      description: formData.get('description') as string,
+      duration: formData.get('duration') as string,
+      skillsCount: skillsDeveloped.length,
+      equipment,
+      skillsDeveloped,
+      instructions
+    };
+
+    setDrills([...drills, newDrill]);
+    setShowCreateModal(false);
+    alert('Drill created successfully!');
+  };
 
   const filteredDrills = drills.filter(drill => {
     const categoryMatch = selectedCategory === 'All Categories' || drill.category === selectedCategory;
@@ -154,7 +194,10 @@ const DrillsLibrary: React.FC = () => {
             Manage training drills and exercises
           </p>
         </div>
-        <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+        <button 
+          onClick={() => setShowCreateModal(true)}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+        >
           <Plus className="w-4 h-4" />
           <span>Create Drill</span>
         </button>
@@ -304,6 +347,155 @@ const DrillsLibrary: React.FC = () => {
           <p className="text-gray-500 dark:text-gray-400">
             Try adjusting your filters or create a new drill.
           </p>
+        </div>
+      )}
+
+      {/* Create Drill Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Create New Drill
+              </h2>
+              <button 
+                onClick={() => setShowCreateModal(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateDrill} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Drill Name *
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  placeholder="Enter drill name..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Description *
+                </label>
+                <textarea
+                  name="description"
+                  required
+                  rows={3}
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  placeholder="Describe the drill..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Category *
+                  </label>
+                  <select
+                    name="category"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  >
+                    <option value="">Select Category</option>
+                    {categories.slice(1).map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Difficulty *
+                  </label>
+                  <select
+                    name="difficulty"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  >
+                    <option value="">Select Difficulty</option>
+                    {difficulties.slice(1).map(difficulty => (
+                      <option key={difficulty} value={difficulty}>{difficulty}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Duration *
+                  </label>
+                  <input
+                    type="text"
+                    name="duration"
+                    required
+                    placeholder="e.g., 15 min"
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Equipment Needed *
+                </label>
+                <input
+                  type="text"
+                  name="equipment"
+                  required
+                  placeholder="Enter equipment separated by commas (e.g., Cones, Footballs, Goals)"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Skills Developed *
+                </label>
+                <input
+                  type="text"
+                  name="skillsDeveloped"
+                  required
+                  placeholder="Enter skills separated by commas (e.g., Ball Control, Speed, Agility)"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Instructions *
+                </label>
+                <textarea
+                  name="instructions"
+                  required
+                  rows={6}
+                  placeholder="Enter each instruction on a new line..."
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  Create Drill
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
