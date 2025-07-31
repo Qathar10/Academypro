@@ -95,5 +95,3 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage }) => {
 };
 
 export default Sidebar;
-
-export default Sidebar
