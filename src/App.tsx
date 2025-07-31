@@ -15,7 +15,15 @@ import Settings from './pages/Settings';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : true;
+  });
+
+  const toggleDarkMode = (newMode: boolean) => {
+    setIsDarkMode(newMode);
+    localStorage.setItem('darkMode', JSON.stringify(newMode));
+  };
 
   const renderPage = () => {
     switch (currentPage) {
@@ -51,7 +59,7 @@ function App() {
       <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
         <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+          <Header isDarkMode={isDarkMode} setIsDarkMode={toggleDarkMode} />
           <main className="flex-1 overflow-y-auto">
             {renderPage()}
           </main>

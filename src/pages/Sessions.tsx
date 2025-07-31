@@ -46,6 +46,72 @@ const Sessions: React.FC = () => {
     },
     {
       id: 4,
+      title: 'U-14 Panthers Fitness Training',
+      group: 'U-14 Panthers',
+      coach: 'Michael Ochieng',
+      date: '2024-12-20',
+      time: '17:00 - 19:00',
+      location: 'Gym',
+      attendees: 6,
+      maxAttendees: 12,
+      status: 'Scheduled',
+      type: 'Fitness'
+    },
+    {
+      id: 5,
+      title: 'U-16 Lions Tactical Session',
+      group: 'U-16 Lions',
+      coach: 'Sarah Wanjiku',
+      date: '2024-12-21',
+      time: '10:00 - 12:00',
+      location: 'Main Field',
+      attendees: 8,
+      maxAttendees: 8,
+      status: 'Scheduled',
+      type: 'Tactical'
+    },
+    {
+      id: 6,
+      title: 'Goalkeeping Masterclass',
+      group: 'All Groups',
+      coach: 'Michael Ochieng',
+      date: '2024-12-22',
+      time: '09:00 - 11:00',
+      location: 'Goal Training Area',
+      attendees: 4,
+      maxAttendees: 8,
+      status: 'Open',
+      type: 'Specialized'
+    },
+    {
+      id: 7,
+      title: 'U-14 Eagles Ball Control Drills',
+      group: 'U-14 Eagles',
+      coach: 'John Kamau',
+      date: '2024-12-23',
+      time: '16:00 - 18:00',
+      location: 'Training Ground B',
+      attendees: 12,
+      maxAttendees: 12,
+      status: 'Scheduled',
+      type: 'Skills'
+    },
+    {
+      id: 8,
+      title: 'Inter-Squad Scrimmage',
+      group: 'All Groups',
+      coach: 'John Kamau',
+      date: '2024-12-24',
+      time: '15:00 - 17:00',
+      location: 'Main Field',
+      attendees: 20,
+      maxAttendees: 24,
+      status: 'Open',
+      type: 'Scrimmage'
+    },
+    // Past sessions
+    {
+      id: 9,
       title: 'U-14 Panthers Training',
       group: 'U-14 Panthers',
       coach: 'Michael Ochieng',
@@ -56,6 +122,45 @@ const Sessions: React.FC = () => {
       maxAttendees: 6,
       status: 'Completed',
       type: 'Training'
+    },
+    {
+      id: 10,
+      title: 'U-16 Lions Speed Training',
+      group: 'U-16 Lions',
+      coach: 'Sarah Wanjiku',
+      date: '2024-12-14',
+      time: '15:00 - 17:00',
+      location: 'Track',
+      attendees: 8,
+      maxAttendees: 8,
+      status: 'Completed',
+      type: 'Fitness'
+    },
+    {
+      id: 11,
+      title: 'U-14 Eagles Passing Workshop',
+      group: 'U-14 Eagles',
+      coach: 'John Kamau',
+      date: '2024-12-13',
+      time: '16:00 - 18:00',
+      location: 'Training Ground A',
+      attendees: 11,
+      maxAttendees: 12,
+      status: 'Completed',
+      type: 'Skills'
+    },
+    {
+      id: 12,
+      title: 'Academy Assessment Day',
+      group: 'All Groups',
+      coach: 'All Coaches',
+      date: '2024-12-12',
+      time: '09:00 - 15:00',
+      location: 'Main Field',
+      attendees: 26,
+      maxAttendees: 26,
+      status: 'Completed',
+      type: 'Assessment'
     }
   ];
 
@@ -92,6 +197,18 @@ const Sessions: React.FC = () => {
         return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400';
       case 'Workshop':
         return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-400';
+      case 'Fitness':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      case 'Tactical':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+      case 'Skills':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'Specialized':
+        return 'bg-pink-100 text-pink-800 dark:bg-pink-900/20 dark:text-pink-400';
+      case 'Scrimmage':
+        return 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/20 dark:text-cyan-400';
+      case 'Assessment':
+        return 'bg-violet-100 text-violet-800 dark:bg-violet-900/20 dark:text-violet-400';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
     }

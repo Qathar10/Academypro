@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Plus, Users, UserCheck, Edit, Trash2, Search, Filter } from 'lucide-react';
+import { Plus, Users, UserCheck, Edit, Trash2, Search, Filter, X, Upload, User } from 'lucide-react';
 
 const Groups: React.FC = () => {
   const [activeTab, setActiveTab] = useState('groups');
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
+  const [showCreateCoachModal, setShowCreateCoachModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const groups = [
+  const [groups, setGroups] = useState([
     {
       id: 1,
       name: 'U-14 Eagles',
@@ -15,7 +17,8 @@ const Groups: React.FC = () => {
       maxPlayers: 15,
       trainingDays: ['Monday', 'Wednesday', 'Friday'],
       trainingTime: '4:00 PM - 6:00 PM',
-      status: 'Active'
+      status: 'Active',
+      image: null
     },
     {
       id: 2,
@@ -26,7 +29,8 @@ const Groups: React.FC = () => {
       maxPlayers: 15,
       trainingDays: ['Tuesday', 'Thursday', 'Saturday'],
       trainingTime: '3:00 PM - 5:00 PM',
-      status: 'Active'
+      status: 'Active',
+      image: null
     },
     {
       id: 3,
@@ -37,11 +41,12 @@ const Groups: React.FC = () => {
       maxPlayers: 12,
       trainingDays: ['Monday', 'Wednesday'],
       trainingTime: '5:00 PM - 7:00 PM',
-      status: 'Recruiting'
+      status: 'Recruiting',
+      image: null
     }
-  ];
+  ]);
 
-  const coaches = [
+  const [coaches, setCoaches] = useState([
     {
       id: 1,
       name: 'John Kamau',
@@ -51,7 +56,8 @@ const Groups: React.FC = () => {
       experience: '8 years',
       groups: ['U-14 Eagles'],
       certifications: ['CAF License C', 'Youth Coaching'],
-      status: 'Active'
+      status: 'Active',
+      image: null
     },
     {
       id: 2,
@@ -62,7 +68,8 @@ const Groups: React.FC = () => {
       experience: '5 years',
       groups: ['U-16 Lions'],
       certifications: ['CAF License D', 'First Aid'],
-      status: 'Active'
+      status: 'Active',
+      image: null
     },
     {
       id: 3,
@@ -73,9 +80,78 @@ const Groups: React.FC = () => {
       experience: '12 years',
       groups: ['U-14 Panthers'],
       certifications: ['CAF License B', 'Goalkeeper Specialist'],
-      status: 'Active'
+      status: 'Active',
+      image: null
     }
-  ];
+  ]);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAddGroup = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    
+    const trainingDays = [];
+    if (formData.get('monday')) trainingDays.push('Monday');
+    if (formData.get('tuesday')) trainingDays.push('Tuesday');
+    if (formData.get('wednesday')) trainingDays.push('Wednesday');
+    if (formData.get('thursday')) trainingDays.push('Thursday');
+    if (formData.get('friday')) trainingDays.push('Friday');
+    if (formData.get('saturday')) trainingDays.push('Saturday');
+    if (formData.get('sunday')) trainingDays.push('Sunday');
+
+    const newGroup = {
+      id: groups.length + 1,
+      name: formData.get('groupName') as string,
+      ageGroup: formData.get('ageGroup') as string,
+      coach: formData.get('coach') as string,
+      players: 0,
+      maxPlayers: parseInt(formData.get('maxPlayers') as string),
+      trainingDays,
+      trainingTime: formData.get('trainingTime') as string,
+      status: 'Active',
+      image: selectedImage
+    };
+
+    setGroups([...groups, newGroup]);
+    setShowCreateGroupModal(false);
+    setSelectedImage(null);
+    alert('Group created successfully!');
+  };
+
+  const handleAddCoach = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    
+    const certifications = (formData.get('certifications') as string).split(',').map(cert => cert.trim());
+
+    const newCoach = {
+      id: coaches.length + 1,
+      name: `${formData.get('firstName')} ${formData.get('lastName')}`,
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string,
+      specialization: formData.get('specialization') as string,
+      experience: formData.get('experience') as string,
+      groups: [],
+      certifications,
+      status: 'Active',
+      image: selectedImage
+    };
+
+    setCoaches([...coaches, newCoach]);
+    setShowCreateCoachModal(false);
+    setSelectedImage(null);
+    alert('Coach added successfully!');
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -90,7 +166,7 @@ const Groups: React.FC = () => {
           </p>
         </div>
         <button 
-          onClick={() => setShowCreateModal(true)}
+          onClick={() => activeTab === 'groups' ? setShowCreateGroupModal(true) : setShowCreateCoachModal(true)}
           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
         >
           <Plus className="w-4 h-4" />
@@ -149,9 +225,17 @@ const Groups: React.FC = () => {
             <div key={group.id} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                    <Users className="w-6 h-6 text-green-600 dark:text-green-400" />
-                  </div>
+                  {group.image ? (
+                    <img 
+                      src={group.image} 
+                      alt={group.name}
+                      className="w-12 h-12 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                      <Users className="w-6 h-6 text-green-600 dark:text-green-400" />
+                    </div>
+                  )}
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                       {group.name}
@@ -256,9 +340,17 @@ const Groups: React.FC = () => {
                   <tr key={coach.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                          <UserCheck className="w-5 h-5 text-white" />
-                        </div>
+                        {coach.image ? (
+                          <img 
+                            src={coach.image} 
+                            alt={coach.name}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                            <UserCheck className="w-5 h-5 text-white" />
+                          </div>
+                        )}
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {coach.name}
@@ -317,6 +409,343 @@ const Groups: React.FC = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Add Group Modal */}
+      {showCreateGroupModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Create New Group
+              </h2>
+              <button 
+                onClick={() => {
+                  setShowCreateGroupModal(false);
+                  setSelectedImage(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddGroup} className="space-y-6">
+              {/* Group Image */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Group Image
+                </label>
+                <div className="flex items-center space-x-4">
+                  <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
+                    {selectedImage ? (
+                      <img src={selectedImage} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <Users className="w-8 h-8 text-gray-400" />
+                    )}
+                  </div>
+                  <div>
+                    <label className="cursor-pointer bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center space-x-2">
+                      <Upload className="w-4 h-4" />
+                      <span>Upload Image</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Upload an image for the group (optional)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Group Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="groupName"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Age Group *
+                  </label>
+                  <select
+                    name="ageGroup"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  >
+                    <option value="">Select Age Group</option>
+                    <option value="Under 10">Under 10</option>
+                    <option value="Under 12">Under 12</option>
+                    <option value="Under 14">Under 14</option>
+                    <option value="Under 16">Under 16</option>
+                    <option value="Under 18">Under 18</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Coach *
+                  </label>
+                  <select
+                    name="coach"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  >
+                    <option value="">Select Coach</option>
+                    {coaches.map((coach) => (
+                      <option key={coach.id} value={coach.name}>
+                        {coach.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Max Players *
+                  </label>
+                  <input
+                    type="number"
+                    name="maxPlayers"
+                    required
+                    min="1"
+                    max="25"
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Training Time *
+                </label>
+                <input
+                  type="text"
+                  name="trainingTime"
+                  required
+                  placeholder="e.g., 4:00 PM - 6:00 PM"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Training Days *
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
+                    <label key={day} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name={day.toLowerCase()}
+                        className="rounded text-green-600 focus:ring-green-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">{day}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateGroupModal(false);
+                    setSelectedImage(null);
+                  }}
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  Create Group
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Coach Modal */}
+      {showCreateCoachModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Add New Coach
+              </h2>
+              <button 
+                onClick={() => {
+                  setShowCreateCoachModal(false);
+                  setSelectedImage(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddCoach} className="space-y-6">
+              {/* Coach Image */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Coach Photo
+                </label>
+                <div className="flex items-center space-x-4">
+                  <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
+                    {selectedImage ? (
+                      <img src={selectedImage} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-8 h-8 text-gray-400" />
+                    )}
+                  </div>
+                  <div>
+                    <label className="cursor-pointer bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center space-x-2">
+                      <Upload className="w-4 h-4" />
+                      <span>Upload Photo</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Upload a photo for the coach (optional)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    First Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Last Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Specialization *
+                  </label>
+                  <select
+                    name="specialization"
+                    required
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  >
+                    <option value="">Select Specialization</option>
+                    <option value="Youth Development">Youth Development</option>
+                    <option value="Technical Skills">Technical Skills</option>
+                    <option value="Goalkeeping">Goalkeeping</option>
+                    <option value="Physical Training">Physical Training</option>
+                    <option value="Tactical Training">Tactical Training</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Experience *
+                  </label>
+                  <input
+                    type="text"
+                    name="experience"
+                    required
+                    placeholder="e.g., 5 years"
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Certifications
+                </label>
+                <input
+                  type="text"
+                  name="certifications"
+                  placeholder="e.g., CAF License C, Youth Coaching (separate with commas)"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateCoachModal(false);
+                    setSelectedImage(null);
+                  }}
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  Add Coach
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
