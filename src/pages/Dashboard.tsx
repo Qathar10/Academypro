@@ -54,7 +54,7 @@ const Dashboard: React.FC = () => {
       {/* Welcome Message */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Welcome back! Here's what's happening at Fazam Football Academy.
+          Welcome back! Here's what's happening at Gunners Football Academy.
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-1">
           Monday, December 16, 2024
