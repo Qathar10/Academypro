@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Plus, Megaphone, Calendar, Users, Edit, Trash2, Search, Filter, Send } from 'lucide-react';
+import { Plus, Megaphone, Calendar, Users, Edit, Trash2, Search, Filter, Send, MessageSquare, Phone, X } from 'lucide-react';
 
 const Announcements: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showSendMessageModal, setShowSendMessageModal] = useState(false);
 
   const announcements = [
     {
@@ -114,13 +115,22 @@ const Announcements: React.FC = () => {
             Communicate with students, parents, and coaches
           </p>
         </div>
-        <button 
-          onClick={() => setShowCreateModal(true)}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Create Announcement</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <button 
+            onClick={() => setShowCreateModal(true)}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Create Announcement</span>
+          </button>
+          <button 
+            onClick={() => setShowSendMessageModal(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>Send Message</span>
+          </button>
+        </div>
       </div>
 
       {/* Search and Filter */}
@@ -300,6 +310,154 @@ const Announcements: React.FC = () => {
                   className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
                 >
                   Publish Now
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Send Message Modal */}
+      {showSendMessageModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Send Message
+              </h2>
+              <button 
+                onClick={() => setShowSendMessageModal(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Recipients *
+                </label>
+                <div className="space-y-2">
+                  <label className="flex items-center">
+                    <input type="checkbox" className="rounded text-green-600 focus:ring-green-500" />
+                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">All Guardians</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="rounded text-green-600 focus:ring-green-500" />
+                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">All Parents</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="rounded text-green-600 focus:ring-green-500" />
+                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">All Coaches</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="rounded text-green-600 focus:ring-green-500" />
+                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">U-14 Eagles Parents</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="rounded text-green-600 focus:ring-green-500" />
+                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">U-16 Lions Parents</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" className="rounded text-green-600 focus:ring-green-500" />
+                    <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">U-14 Panthers Parents</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Message Type *
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className="flex items-center p-4 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <input type="radio" name="messageType" value="whatsapp" className="text-green-600 focus:ring-green-500" />
+                    <div className="ml-3 flex items-center space-x-2">
+                      <MessageSquare className="w-5 h-5 text-green-600" />
+                      <div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">WhatsApp</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Send via WhatsApp</div>
+                      </div>
+                    </div>
+                  </label>
+                  
+                  <label className="flex items-center p-4 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <input type="radio" name="messageType" value="sms" className="text-blue-600 focus:ring-blue-500" />
+                    <div className="ml-3 flex items-center space-x-2">
+                      <Phone className="w-5 h-5 text-blue-600" />
+                      <div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">SMS</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Send via SMS</div>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Subject
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  placeholder="Enter message subject..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Message *
+                </label>
+                <textarea
+                  rows={6}
+                  required
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white"
+                  placeholder="Type your message here..."
+                />
+                <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  Character count: 0/160 (SMS limit)
+                </div>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <MessageSquare className="h-5 w-5 text-blue-400" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                      Message Preview
+                    </h3>
+                    <div className="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                      <p>Recipients: 0 selected</p>
+                      <p>Estimated cost: KSh 0 (SMS) / Free (WhatsApp)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowSendMessageModal(false)}
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Save as Draft
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center space-x-2"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>Send Message</span>
                 </button>
               </div>
             </form>
