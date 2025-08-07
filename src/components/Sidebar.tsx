@@ -12,7 +12,8 @@ import {
   BarChart3, 
   Settings, 
   LogOut,
-  Shield
+  Shield,
+  Package
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -29,6 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage }) => {
     { id: 'assessments', label: 'Assessments', icon: ClipboardCheck },
     { id: 'drills', label: 'Drills Library', icon: BookOpen },
     { id: 'finance', label: 'Finance', icon: DollarSign },
+    { id: 'inventory', label: 'Inventory', icon: Package },
     { id: 'announcements', label: 'Announcements', icon: Megaphone },
     { id: 'events', label: 'Events', icon: CalendarDays },
     { id: 'reports', label: 'Reports', icon: BarChart3 },

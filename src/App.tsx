@@ -12,6 +12,7 @@ import Announcements from './pages/Announcements';
 import Events from './pages/Events';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import Inventory from './pages/Inventory';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -58,6 +59,8 @@ function App() {
         return <Reports />;
       case 'settings':
         return <Settings />;
+      case 'inventory':
+        return <Inventory />;
       default:
         return <Dashboard />;
     }

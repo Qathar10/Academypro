@@ -12,6 +12,7 @@ interface Drill {
   equipment: string[];
   skillsDeveloped: string[];
   instructions: string[];
+  thumbnail: string;
 }
 
 const DrillsLibrary: React.FC = () => {
@@ -35,7 +36,8 @@ const DrillsLibrary: React.FC = () => {
         'Players dribble through the cones using both feet',
         'Focus on close control and keeping the ball close',
         'Repeat 5 times, increasing speed each time'
-      ]
+      ],
+      thumbnail: 'https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg?auto=compress&cs=tinysrgb&w=400'
     },
     {
       id: 2,
@@ -52,7 +54,8 @@ const DrillsLibrary: React.FC = () => {
         'Players at each corner',
         'Pass clockwise, then counter-clockwise',
         'Focus on accuracy and first touch'
-      ]
+      ],
+      thumbnail: 'https://images.pexels.com/photos/1618200/pexels-photo-1618200.jpeg?auto=compress&cs=tinysrgb&w=400'
     },
     {
       id: 3,
@@ -69,7 +72,8 @@ const DrillsLibrary: React.FC = () => {
         'Players take turns shooting from each position',
         'Focus on accuracy over power initially',
         'Progress to power shots once accuracy improves'
-      ]
+      ],
+      thumbnail: 'https://images.pexels.com/photos/1171084/pexels-photo-1171084.jpeg?auto=compress&cs=tinysrgb&w=400'
     },
     {
       id: 4,
@@ -86,7 +90,8 @@ const DrillsLibrary: React.FC = () => {
         'One attacker, one defender',
         'Attacker tries to score, defender prevents',
         'Switch roles every 2 minutes'
-      ]
+      ],
+      thumbnail: 'https://images.pexels.com/photos/1884574/pexels-photo-1884574.jpeg?auto=compress&cs=tinysrgb&w=400'
     },
     {
       id: 5,
@@ -103,7 +108,8 @@ const DrillsLibrary: React.FC = () => {
         'Perform various footwork patterns',
         'Start slow, increase speed gradually',
         'Focus on precision over speed initially'
-      ]
+      ],
+      thumbnail: 'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=400'
     },
     {
       id: 6,
@@ -120,7 +126,8 @@ const DrillsLibrary: React.FC = () => {
         'Two teams of 4 players each',
         'Focus on keeping possession',
         'Encourage quick passing and movement'
-      ]
+      ],
+      thumbnail: 'https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg?auto=compress&cs=tinysrgb&w=400'
     }
   ]);
 
@@ -145,7 +152,8 @@ const DrillsLibrary: React.FC = () => {
       skillsCount: skillsDeveloped.length,
       equipment,
       skillsDeveloped,
-      instructions
+      instructions,
+      thumbnail: 'https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg?auto=compress&cs=tinysrgb&w=400'
     };
 
     setDrills([...drills, newDrill]);
@@ -241,17 +249,27 @@ const DrillsLibrary: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredDrills.map((drill) => (
           <div key={drill.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-            {/* Header */}
-            <div className="p-6 pb-4">
-              <div className="flex items-center justify-between mb-3">
+            {/* Drill Thumbnail */}
+            <div className="relative h-48 overflow-hidden">
+              <img 
+                src={drill.thumbnail} 
+                alt={drill.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute top-4 left-4">
                 <span className={`px-2 py-1 text-xs rounded-full ${getCategoryColor(drill.category)}`}>
                   {drill.category}
                 </span>
+              </div>
+              <div className="absolute top-4 right-4">
                 <span className={`px-2 py-1 text-xs rounded-full ${getDifficultyColor(drill.difficulty)}`}>
                   {drill.difficulty}
                 </span>
               </div>
-              
+            </div>
+            
+            {/* Header */}
+            <div className="p-6 pb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 {drill.name}
               </h3>

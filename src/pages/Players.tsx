@@ -942,8 +942,18 @@ const Players: React.FC = () => {
                         {guardian.name} – {guardian.relationship}
                       </option>
                     ))}
-                    <option value="New">New</option>
                   </select>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddStudentModal(false);
+                      setShowAddGuardianModal(true);
+                    }}
+                    className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Guardian</span>
+                  </button>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
